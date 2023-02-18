@@ -12,6 +12,7 @@ int main(void)
 {
 
 	int x, y, z;
+
 	for (x = '0'; x < '9'; x++)
 	{
 
@@ -20,7 +21,7 @@ int main(void)
 
 	for (z = y + 1; z <= '9'; z++)
 	{
-	if((y != x) != z)
+	if ((y != x) != z)
 	{
 	putchar(x);
 	putchar(y);
