@@ -6,7 +6,7 @@
 * Return: 1 for alphabet character or 0 for anything else
 */
 
-int _isalpa(int c)
+int _isalpha(int c)
 
 {
 	
