@@ -8,6 +8,7 @@
  */
 
 int main(void)
+
 {
 
 	print_square(2);
