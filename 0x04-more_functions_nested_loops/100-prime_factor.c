@@ -18,9 +18,9 @@ int main(void)
 	{
 	if (number % x == 0)
 	{
-	naxf = number / x;
+	maxf = number / x;
 	}
 	}
-	printf("%ld\n", naxf);
+	printf("%ld\n", maxf);
 	return  (0);
 }
