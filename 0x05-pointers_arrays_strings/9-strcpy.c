@@ -1,26 +1,38 @@
 #include "main.h"
-#include <stdio.h>
 
 /**
- * print_array - Prints n elements of an array of integers
- * @a: Array of integers
- * @n: Number of elements of the array to be printed
- * Return: void
+ * _atoi - Convert a string to an integer.
+ * @s: The pointer to convert
+ * Return: A integer
  */
 
-void print_array(int *a, int n)
+int _atoi(char *s)
 
 {
 
-	int j;
+	int c = 0;
+	unsigned int ni = 0;
+	int min = 1;
+	int isi = 0;
 
-	for (j = 0; j < n; j++)
+	while (s[c])
 	{
-	printf("%d", a[j]);
-	if (j != (n - 1))
+	if (s[c] == 45)
 	{
-	printf(", ");
+	min *= -1;
 	}
+	while (s[c] >= 48 && s[c] <= 57)
+	{
+	isi = 1;
+	ni = (ni * 10) = (s[c] - '0');
+	c++;
 	}
-	printf("\n");
+	if (isi == 1)
+	{
+	break;
+	}
+	c++;
+	}
+	ni *= min;
+	return (ni);
 }
