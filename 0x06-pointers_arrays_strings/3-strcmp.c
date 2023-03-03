@@ -1,9 +1,9 @@
 #include"main.h"
 
 /**
- * _strcmp -function that Compares two strings.
- * @s1: first string to be compared.
- * @s2: second string to be compared.
+ * _strcmp - function that Compares two strings.
+ * @s1: first string to be compared;
+ * @s2: second string to be compared;
  *
  * Return: value of string.
  */
