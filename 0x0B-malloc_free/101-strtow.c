@@ -8,7 +8,7 @@ char **strtow(char *str);
 /**
  * word_len - Locates the index marking the end of the
  * first word contained within a string.
- *@ste: The string to be searched.
+ *@str: The string to be searched.
  *
  * Return: The index marking the end of the initial word pointed to by
  * str.
