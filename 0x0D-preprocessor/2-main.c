@@ -5,6 +5,6 @@
  */
 int main(void)
 {
-	printf("%s\n", "FILE");
+	printf("%s\n", "2-main.c");
 	return (0);
 }
