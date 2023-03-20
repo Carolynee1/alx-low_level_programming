@@ -1,13 +1,11 @@
-#include <stdio.h>
 #include <stdlib.h>
-
+#include <stdio.h>
 /**
- * main - prints the name of the file program was compiled from.
- * Return: Always 0.
+ * main - main file returns file name
+ * Return: returns 0 always
  */
-
 int main(void)
 {
-	printf("%s\n", "2-main.c");
+	printf("%s\n", __FILE__);
 	return (0);
 }
