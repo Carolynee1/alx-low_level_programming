@@ -53,7 +53,7 @@ dog_t *new_dog(char *name, float age, char *owner)
 
 /**
  * _strlen -Returns the length of a sting
- * @s; String to count
+ * @s: String to count
  *
  * Return: String length
  */
