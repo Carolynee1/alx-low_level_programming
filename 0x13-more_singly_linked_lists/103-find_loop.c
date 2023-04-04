@@ -8,25 +8,25 @@
  */
 listint_t *find_listint_loop(listint_t *head)
 {
-listint_t *weak = head;
-listint_t *tough = head;
+listint_t *slow = head;
+listint_t *fast = head;
 
 if (!head)
 return (NULL);
 
-while (weak && tough && tough->next)
+while (slow && fast && fast->next)
 {
-tough = tough->next->next;
-weak = weak->next;
-if (tough == weak)
+fast = fast->next->next;
+slow = slow->next;
+if (fast == slow)
 {
-weak = head;
-while (slow != tough)
+slow = head;
+while (slow != fast)
 {
-weak = weak->next;
-tough = tough->next;
+slow = slow->next;
+fast = fast->next;
 }
-return (tough);
+return (fast);
 }
 }
 
