@@ -1,8 +1,8 @@
 #include "main.h"
 
 /**
- * create_file - The function first checks if the filename argument is NULL,
- * and returns -1 if it is
+ * create_file - takes two arguments: a filename string
+ * and a text_content string
  * @filename: the name of the file to create
  * @text_content: the text to write to the file
  *
