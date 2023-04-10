@@ -1,116 +1,53 @@
 #include "main.h"
-#include <errno.h>
 #include <stdio.h>
+#include <errno.h>
 
-#define BUFFER_SIZE 1024
+#define BUFSIZE 1024
 
-int open_file_for_reading(char *filename);
-int source_fd = open_file_for_reading(argv[1]);
-int open_file_for_writing(char *filename);
-int copy_file(int source_fd, int dest_fd);
-int close_file(int fd);
-void set_permissions(char *filename);
-
-int main(int argc, char *argv[])
+void print_error(char *error_message, char *filename, int exit_code)
 {
+	dprintf(STDERR_FILENO, error_message, filename);
+	exit(exit_code);
+}
+
+int main(int argc, char **argv)
+{
+	int fd_from, fd_to;
+	char buf[BUFSIZE];
+	ssize_t bytes_read, bytes_written;
+
+	/* Check for correct number of arguments */
 	if (argc != 3)
+		print_error("Usage: cp file_from file_to\n", "", 97);
+
+	/* Open file_from for reading */
+	fd_from = open(argv[1], O_RDONLY);
+	if (fd_from == -1)
+		print_error("Error: Can't read from file %s\n", argv[1], 98);
+
+	/* Open file_to for writing (truncating if it already exists) */
+	fd_to = open(argv[2], O_WRONLY | O_CREAT | O_TRUNC, 0664);
+	if (fd_to == -1)
+		print_error("Error: Can't write to %s\n", argv[2], 99);
+
+	/* Copy contents of file_from to file_to */
+	while ((bytes_read = read(fd_from, buf, BUFSIZE)) > 0)
 	{
-		dprintf(STDERR_FILENO, "Usage: cp file_from file_to\n");
-		exit(97);
+		bytes_written = write(fd_to, buf, bytes_read);
+		if (bytes_written == -1)
+			print_error("Error: Can't write to %s\n", argv[2], 99);
 	}
 
-	int source_fd = open_file_for_reading(argv[1]);
-	int dest_fd = open_file_for_writing(argv[2]);
-
-	if (copy_file(source_fd, dest_fd) == -1)
-	{
-		exit(99);
-	}
-
-	set_permissions(argv[2]);
-
-	if (close_file(source_fd) == -1)
-	{
-		exit(100);
-	}
-
-	if (close_file(dest_fd) == -1)
-	{
-		exit(100);
-	}
-
-	return (0);
-}
-
-int open_file_for_reading(char *filename)
-{
-	int fd = open(filename, O_RDONLY);
-
-	if (fd == -1)
-
-	{
-		dprintf(STDERR_FILENO, "Error: Can't read from file %s\n", filename);
-		exit(98);
-	}
-	return (fd);
-}
-
-int open_file_for_writing(char *filename)
-{
-	int fd = open(filename, O_WRONLY | O_CREAT | O_TRUNC, 0600);
-
-	if (fd == -1)
-	{
-		dprintf(STDERR_FILENO, "Error: Can't write to %s\n", filename);
-		exit(99);
-	}
-	return (fd);
-}
-
-int copy_file(int source_fd, int dest_fd)
-{
-	ssize_t bytes_read;
-	char buffer[BUFFER_SIZE];
-
-	while ((bytes_read = read(source_fd, buffer, BUFFER_SIZE)) > 0)
-
-	{
-		ssize_t bytes_written = write(dest_fd, buffer, bytes_read);
-
-		if (bytes_written == -1 || bytes_written != bytes_read)
-
-		{
-			dprintf(STDERR_FILENO, "Error: Can't write
-					to file descriptor %d\n", dest_fd);
-			return (-1);
-		}
-	}
+	/* Check for errors in reading or writing */
 	if (bytes_read == -1)
-	{
+		print_error("Error: Can't read from file %s\n", argv[1], 98);
 
-		dprintf(STDERR_FILENO, "Error: Can't read from
-				file descriptor %d\n", source_fd);
-		return (-1);
-	}
-	return (0);
+	/* Close file descriptors */
+	if (close(fd_from) == -1)
+		print_error("Error: Can't close fd %d\n", int fd_from, 100);
+	if (close(fd_to) == -1)
+		print_error("Error: Can't close fd %d\n", int fd_to, 100);
+
+	return 0;
 }
 
-int close_file(int fd)
-{
-	int result = close(fd);
-
-	if (result == -1)
-	{
-		dprintf(STDERR_FILENO, "Error: Can't close fd %d\n", fd);
-		return (-1);
-	}
-	return (0);
-}
-
-void set_permissions(char *filename)
-{
-	int result = chmod(filename, 0600);
-
-	if (result == -1 && errno != EEXIST)
-	{
-		dprintf(STDERR_FILENO, "Error: Can't set permissions for %s\n",
