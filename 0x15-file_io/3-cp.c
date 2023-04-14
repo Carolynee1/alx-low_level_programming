@@ -1,53 +1,54 @@
 #include "main.h"
+#include <stdlib.h>
 #include <stdio.h>
-#include <errno.h>
 
-#define BUFSIZE 1024
+#define BUFFER_SIZE 1024
 
-void print_error(char *error_message, char *filename, int exit_code)
+int main(int argc, char *argv[])
 {
-	dprintf(STDERR_FILENO, error_message, filename);
-	exit(exit_code);
-}
+	FILE *fp_from;
+	FILE *fp_to;
 
-int main(int argc, char **argv)
-{
-	int fd_from, fd_to;
-	char buf[BUFSIZE];
-	ssize_t bytes_read, bytes_written;
-
-	/* Check for correct number of arguments */
 	if (argc != 3)
-		print_error("Usage: cp file_from file_to\n", "", 97);
-
-	/* Open file_from for reading */
-	fd_from = open(argv[1], O_RDONLY);
-	if (fd_from == -1)
-		print_error("Error: Can't read from file %s\n", argv[1], 98);
-
-	/* Open file_to for writing (truncating if it already exists) */
-	fd_to = open(argv[2], O_WRONLY | O_CREAT | O_TRUNC, 0664);
-	if (fd_to == -1)
-		print_error("Error: Can't write to %s\n", argv[2], 99);
-
-	/* Copy contents of file_from to file_to */
-	while ((bytes_read = read(fd_from, buf, BUFSIZE)) > 0)
 	{
-		bytes_written = write(fd_to, buf, bytes_read);
-		if (bytes_written == -1)
-			print_error("Error: Can't write to %s\n", argv[2], 99);
+		printf("Usage: %s file_from file_to\n", argv[0]);
+		exit(1);
 	}
 
-	/* Check for errors in reading or writing */
-	if (bytes_read == -1)
-		print_error("Error: Can't read from file %s\n", argv[1], 98);
+	fp_from = fopen(argv[1], "rb");
 
-	/* Close file descriptors */
-	if (close(fd_from) == -1)
-		print_error("Error: Can't close fd %d\n", int fd_from, 100);
-	if (close(fd_to) == -1)
-		print_error("Error: Can't close fd %d\n", int fd_to, 100);
+	if (fp_from == NULL)
+	{
+		printf("Error: Can't read from file %s\n", argv[1]);
+		exit(1);
+	}
 
-	return 0;
+	fp_to = fopen(argv[2], "wb");
+
+	if (fp_to == NULL)
+	{
+		printf("Error: Can't write to file %s\n", argv[2]);
+		exit(1);
+	}
+
+	char buffer[BUFFER_SIZE];
+	size_t bytes_read;
+
+	while ((bytes_read = fread(buffer, 1, BUFFER_SIZE, fp_from)) > 0)
+	{
+		fwrite(buffer, 1, bytes_read, fp_to);
+	}
+
+	if (fclose(fp_from) != 0)
+	{
+		printf("Error: Can't close file %s\n", argv[1]);
+		exit(1);
+	}
+
+	if (fclose(fp_to) != 0)
+	{
+		printf("Error: Can't close file %s\n", argv[2]);
+		exit(1);
+	}
+	return (0);
 }
-
