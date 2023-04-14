@@ -5,10 +5,13 @@
 #define BUFFER_SIZE 1024
 
 /**
- * handle_error - Prints an error message and exits the program.
+ * handle_error - displays an error message and exits
+ * the program with an error code
  *
  * @filename: The name of the file that caused the error.
  * @message: The error message to print.
+ *
+ * Return: None
  */
 
 void handle_error(char *filename, char *message)
@@ -30,7 +33,7 @@ FILE *open_file(char *filename, char *mode)
 }
 
 /**
- * main - Copies the contents of one file to another.
+ * main - the entry point of the program
  *
  * @argc: The number of command-line arguments.
  * @argv: An array of command-line arguments.
