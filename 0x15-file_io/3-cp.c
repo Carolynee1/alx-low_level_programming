@@ -6,6 +6,8 @@
 
 int main(int argc, char *argv[])
 {
+	char buffer[BUFFER_SIZE];
+	size_t bytes_read;
 	FILE *fp_from;
 	FILE *fp_to;
 
@@ -31,8 +33,8 @@ int main(int argc, char *argv[])
 		exit(1);
 	}
 
-	char buffer[BUFFER_SIZE];
-	size_t bytes_read;
+
+	bytes_read = 0;
 
 	while ((bytes_read = fread(buffer, 1, BUFFER_SIZE, fp_from)) > 0)
 	{
