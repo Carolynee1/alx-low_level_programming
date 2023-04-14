@@ -1,80 +1,65 @@
 #include "main.h"
-#include <stdlib.h>
-#include <stdio.h>
 
 #define BUFFER_SIZE 1024
 
 /**
- * handle_error - displays an error message and exits
+ * h_err - displays an error message and exits
+ * main - copies the content of a file to another file.
  * the program with an error code
  *
- * @filename: The name of the file that caused the error.
  * @message: The error message to print.
  *
  * Return: None
  */
 
-void handle_error(char *filename, char *message)
-{
-	printf("Error: %s %s\n", message, filename);
-	exit(1);
-}
-
-FILE *open_file(char *filename, char *mode)
-{
-	FILE *fp = fopen(filename, mode);
-
-	if (fp == NULL)
-
-	{
-		handle_error(filename, "Can't open file");
-	}
-	return (fp);
-}
-
-/**
- * main - the entry point of the program
- *
- * @argc: The number of command-line arguments.
- * @argv: An array of command-line arguments.
- *
- * Return: 0 on success, non-zero on failure.
- */
+void h_err(char *message);
 
 int main(int argc, char *argv[])
 {
+	int fd_from, fd_to;
+	ssize_t bytes_read, bytes_written;
 	char buffer[BUFFER_SIZE];
-	size_t bytes_read;
-	FILE *fp_from;
-	FILE *fp_to;
 
 	if (argc != 3)
 	{
-		printf("Usage: %s file_from file_to\n", argv[0]);
-		exit(1);
+		dprintf(STDERR_FILENO, "Usage: %s file_from file_to\n", argv[0]);
+		exit(97);
 	}
 
-	fp_from = fopen(argv[1], "rb");
-	fp_to = fopen(argv[2], "wb");
-
-
-	bytes_read = 0;
-
-	while ((bytes_read = fread(buffer, 1, BUFFER_SIZE, fp_from)) > 0)
+	fd_from = open(argv[1], O_RDONLY);
+	if (fd_from == -1)
 	{
-		fwrite(buffer, 1, bytes_read, fp_to);
+		h_err("Can't write to file");
 	}
 
-	if (fclose(fp_from) != 0)
+	fd_to = open(argv[2], O_WRONLY | O_CREAT | O_TRUNC, 0600);
+
+	if (fd_to == -1)
 	{
-		printf("Error: Can't close file %s\n", argv[1]);
-		exit(1);
+		h_err("Can't write to file");
 	}
 
-	if (fclose(fp_to) != 0)
+	while ((bytes_read = read(fd_from, buffer, BUFFER_SIZE)) > 0)
 	{
-		printf("Error: Can't close file %s\n", argv[2]);
-		exit(1);
+		bytes_written = write(fd_to, buffer, bytes_read);
+
+		if (bytes_written == -1 || bytes_written != bytes_read)
+
+		{
+			h_err("Can't write to file");
+		}
+
 	}
-	return (0);
+	if (bytes_read == -1)
+	{
+		h_err("Can't read from file");
+	}
+
+	return (EXIT_SUCCESS);
+}
+
+void h_err(char *message)
+{
+	fprintf(stderr, "Error: %s\n", message);
+	exit(EXIT_FAILURE);
 }
