@@ -4,6 +4,40 @@
 
 #define BUFFER_SIZE 1024
 
+/**
+ * handle_error - Prints an error message and exits the program.
+ *
+ * @filename: The name of the file that caused the error.
+ * @message: The error message to print.
+ */
+
+void handle_error(char *filename, char *message)
+{
+	printf("Error: %s %s\n", message, filename);
+	exit(1);
+}
+
+FILE *open_file(char *filename, char *mode)
+{
+	FILE *fp = fopen(filename, mode);
+
+	if (fp == NULL)
+
+	{
+		handle_error(filename, "Can't open file");
+	}
+	return (fp);
+}
+
+/**
+ * main - Copies the contents of one file to another.
+ *
+ * @argc: The number of command-line arguments.
+ * @argv: An array of command-line arguments.
+ *
+ * Return: 0 on success, non-zero on failure.
+ */
+
 int main(int argc, char *argv[])
 {
 	char buffer[BUFFER_SIZE];
@@ -18,20 +52,7 @@ int main(int argc, char *argv[])
 	}
 
 	fp_from = fopen(argv[1], "rb");
-
-	if (fp_from == NULL)
-	{
-		printf("Error: Can't read from file %s\n", argv[1]);
-		exit(1);
-	}
-
 	fp_to = fopen(argv[2], "wb");
-
-	if (fp_to == NULL)
-	{
-		printf("Error: Can't write to file %s\n", argv[2]);
-		exit(1);
-	}
 
 
 	bytes_read = 0;
