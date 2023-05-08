@@ -3,7 +3,9 @@
 #define BUFFER_SIZE 1024
 
 /**
- * h_err - displays an error message and exits
+ * h_err - Prints an error message to stderr and exits
+ * the program with a failure code
+ *
  * main - copies the content of a file to another file.
  * the program with an error code
  *
@@ -33,7 +35,6 @@ int main(int argc, char *argv[])
 	}
 
 	fd_to = open(argv[2], O_WRONLY | O_CREAT | O_TRUNC, 0600);
-
 	if (fd_to == -1)
 	{
 		h_err("Can't write to file");
@@ -44,12 +45,11 @@ int main(int argc, char *argv[])
 		bytes_written = write(fd_to, buffer, bytes_read);
 
 		if (bytes_written == -1 || bytes_written != bytes_read)
-
 		{
 			h_err("Can't write to file");
 		}
-
 	}
+
 	if (bytes_read == -1)
 	{
 		h_err("Can't read from file");
