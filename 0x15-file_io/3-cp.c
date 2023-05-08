@@ -65,7 +65,7 @@ int main(int argc, char *argv[])
 		h_err("Can't read from file");
 	}
 
-	return (EXIT_SUCCESS);
+	exit(98);
 }
 /**
  * h_err - displays an error message and exits the program with an error code
