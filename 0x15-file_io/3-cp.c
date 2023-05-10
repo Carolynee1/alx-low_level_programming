@@ -1,84 +1,73 @@
 #include "main.h"
 
-#define BUFFER_SIZE 1024
+#define BUF_SIZE 1024
 
 /**
- * h_err - displays an error message and exits the program with an error code
+ * main - Copies the content of a file to another file
+ * @argc: The number of command-line arguments
+ * @argv: An array of pointers to the arguments
  *
- * @message: The error message to print.
- *
- * This function displays the error message specified in @message to the
- * standard error stream and exits the program with an error code. The
- * error code is specified by the macro EXIT_FAILURE in <stdlib.h>.
+ * Return: 0 if successful, 97-100 otherwise
  */
-
-void h_err(char *message);
-
-/**
- * main - Entry point for the program
- *
- * Description: This program copies the content of one file to another.
- *
- * @argc: The number of arguments passed to the program
- * @argv: An array of strings containing the arguments
- *
- * Return: 0 on success, or an error code on failure
- */
-
 int main(int argc, char *argv[])
 {
-	int fd_from, fd_to;
-	ssize_t bytes_read, bytes_written;
-	char buffer[BUFFER_SIZE];
+	int fd_from, fd_to, bytes_read, bytes_written;
+	char buf[BUF_SIZE];
 
+	/* Check the number of arguments */
 	if (argc != 3)
 	{
-		dprintf(STDERR_FILENO, "Usage: %s file_from file_to\n", argv[0]);
+		dprintf(STDERR_FILENO, "Usage: cp file_from file_to\n");
 		exit(97);
 	}
 
+	/* Open the source file for reading */
 	fd_from = open(argv[1], O_RDONLY);
 	if (fd_from == -1)
 	{
-		h_err("Can't write to file");
+		dprintf(STDERR_FILENO, "Error: Can't read from file %s\n", argv[1]);
+		exit(98);
 	}
 
+	/* Open the destination file for writing, truncating if it already exists */
 	fd_to = open(argv[2], O_WRONLY | O_CREAT | O_TRUNC, 0600);
 	if (fd_to == -1)
 	{
-		h_err("Can't write to file");
+		dprintf(STDERR_FILENO, "Error: Can't write to %s\n", argv[2]);
+		exit(99);
 	}
 
-	while ((bytes_read = read(fd_from, buffer, BUFFER_SIZE)) > 0)
+	/* Copy the contents of the source file to the destination file */
+	while ((bytes_read = read(fd_from, buf, BUF_SIZE)) > 0)
 	{
-		bytes_written = write(fd_to, buffer, bytes_read);
-
+		bytes_written = write(fd_to, buf, bytes_read);
 		if (bytes_written == -1 || bytes_written != bytes_read)
-
 		{
-			h_err("Can't write to file");
+			dprintf(STDERR_FILENO, "Error: Can't write to %s\n", argv[2]);
+			exit(99);
 		}
-
 	}
+
+	/* Check for read error */
 	if (bytes_read == -1)
 	{
-		h_err("Can't read from file");
+		dprintf(STDERR_FILENO, "Error: Can't read from file %s\n", argv[1]);
+		exit(98);
 	}
 
-	exit(99);
-}
-/**
- * h_err - displays an error message and exits the program with an error code
- *
- * @message: The error message to print.
- *
- * This function displays the error message specified in @message to the
- * standard error stream and exits the program with an error code. The
- * error code is specified by the macro EXIT_FAILURE in <stdlib.h>.
- */
+	/* Close the files and check for errors */
+	if (close(fd_from) == -1)
+	{
+		dprintf(STDERR_FILENO, "Error: Can't close file %s\n", argv[1]);
+		exit(100);
+	}
 
-void h_err(char *message)
-{
-	fprintf(stderr, "Error: %s\n", message);
-	exit(EXIT_FAILURE);
+	if (close(fd_to) == -1)
+	{
+		dprintf(STDERR_FILENO, "Error: Can't close file %s\n", argv[2]);
+		exit(100);
+	}
+
+	return (0);
 }
+
