@@ -41,6 +41,7 @@ int main(int argc, char *argv[])
 	}
 
 	/* Display the information contained in the ELF header */
+	printf("ELF Header:\n");
 	printf("  Magic:   ");
 	for (int i = 0; i < EI_NIDENT; i++)
 		printf("%02x ", elf_header.e_ident[i]);
@@ -50,8 +51,29 @@ int main(int argc, char *argv[])
 	printf("  Version:                           %d (current)\n", elf_header.e_ident[EI_VERSION]);
 	printf("  OS/ABI:                            %s\n", elf_header.e_ident[EI_OSABI] == ELFOSABI_SYSV ? "UNIX - System V" : "UNIX - Unknown");
 	printf("  ABI Version:                       %d\n", elf_header.e_ident[EI_ABIVERSION]);
-	printf("  Type:                              %d (Executable file)\n", elf_header.e_type);
-	printf("  Entry point address:               %lx\n", elf_header.e_entry);
+	printf("  Type:                              ");
+	switch (elf_header.e_type)
+	{
+		case ET_NONE:
+			printf("NONE (None)\n");
+			break;
+		case ET_REL:
+			printf("REL (Relocatable file)\n");
+			break;
+		case ET_EXEC:
+			printf("EXEC (Executable file)\n");
+			break;
+		case ET_DYN:
+			printf("DYN (Shared object file)\n");
+			break;
+		case ET_CORE:
+			printf("CORE (Core file)\n");
+			break;
+		default:
+			printf("<unknown: %x>\n", elf_header.e_type);
+	}
+	printf("  Entry point address:               0x%lx\n", elf_header.e_entry);
+	printf("\n");
 
 	close(fd);
 	return (0);
